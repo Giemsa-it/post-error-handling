@@ -3,8 +3,9 @@ const cors = require('cors');
 const db = require('mysql2');
 
 const app = express();
-const port = 4000;
+const port = 3000;
 
+app.use(cors());
 app.use(express.json());
 
 const connection = db.createConnection({
@@ -14,17 +15,19 @@ const connection = db.createConnection({
     database:"pokemon"
 });
 
-//localhost:4000/all?type=fire
+//localhost:4000/
 app.get('/all',(req,res)=>{
     const queryParameter = req.query.type;
-    console.log(queryParameter);
-    res.send(queryParameter);
+    const q = "SELECT * FROM pokemon";
+    connection.query(q, (error, results)=>{
+        res.send(results);
+    })
 });
 
 //localhost:4000/new
 app.post('/new',(req,res)=>{
-    const type = req.body.primaryType;
-    const speed = req.body.speed;
+    const type = req.body.name;
+    const speed = req.body.primary;
 
     console.log(type);
     console.log(speed);
