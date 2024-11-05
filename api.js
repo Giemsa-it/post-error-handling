@@ -11,7 +11,7 @@ app.use(express.json());
 const connection = db.createConnection({
     host:"localhost",
     user:"root",
-    password:"hejsa",
+    password: process.env.psw,
     database:"pokemon"
 });
 
@@ -24,15 +24,26 @@ app.get('/all',(req,res)=>{
     })
 });
 
-//localhost:4000/new
+//localhost:3000/new
 app.post('/new',(req,res)=>{
-    const type = req.body.name;
-    const speed = req.body.primary;
-
-    console.log(type);
-    console.log(speed);
-    res.send("Successful POST request");
+    const name = req.body.name;
+    const primary = req.body.primary;
+    const q = `insert into pokemon (name, primary_type) values("${name}", "${primary}");`;
+    connection.query(q, (error, results)=>{
+        res.send(results);
+    })
 });
+
+app.post('/hp',(req,res)=>{
+    const pokedex_number = req.body.pokedex_number;
+    const hp = req.body.hp;
+
+    const q = `UPDATE pokemon set hp = ${hp} WHERE pokedex_number = ${pokedex_number}`;
+    connection.query(q, (error, results)=>{
+        res.send(results);
+    })
+});
+
 
 app.get('*',(req,res) =>{
     res.sendStatus(404);
